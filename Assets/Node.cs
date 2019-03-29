@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class Node
+public class Node : IComparable
 {
     public GridController Grid;
 
@@ -30,6 +30,7 @@ public class Node
 
     public int x { get; set; }
     public int y { get; set; }
+    public List<Node> Neighbors = new List<Node>();
 
     public List<Node> BlurKernelList()
     {
@@ -61,7 +62,7 @@ public class Node
 
     public List<Node> NeighborsList()
     {
-        List<Node> Neighbors = new List<Node>();
+        Neighbors.Clear();
 
         for(int i = -1; i <= 1; i++)
         {
@@ -87,7 +88,6 @@ public class Node
 
             }
         }
-
         return Neighbors;
 
     }
@@ -111,4 +111,13 @@ public class Node
 
     }
 
+    public int CompareTo(object obj)
+    {
+        var tmp = obj as Node;
+        if (tmp == null)
+            return 0;
+        if (this.fCost < tmp.fCost || this.fCost == tmp.fCost && this.hCost < tmp.hCost)
+            return -1;
+        return 1;
+    }
 }

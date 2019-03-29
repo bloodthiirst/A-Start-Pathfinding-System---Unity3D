@@ -8,7 +8,7 @@ using UnityEngine;
 public class PathFinderManager : MonoBehaviour
 {
     static PathFinderManager instance;
-    public Queue<FindPathRequest> RequestQueue { get; set; }
+    public Queue<FindPathRequest> RequestQueue { get; private set; } = new Queue<FindPathRequest>();
     public PathFinder PF;
 
     private readonly object PFLock = new object();
@@ -16,8 +16,6 @@ public class PathFinderManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
-
-        instance.RequestQueue = new Queue<FindPathRequest>();
     }
 
     public static PathFinderManager GetInstance() => instance;
@@ -25,31 +23,37 @@ public class PathFinderManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        while (RequestQueue.Count > 0)
+        while (RequestQueue.Count != 0)
         {
-            ThreadStart th = new ThreadStart( () => ProcessRequest(RequestQueue.Dequeue()) );
-            th.Invoke();
+            FindPathRequest Request = RequestQueue.Dequeue();
+
+            lock (PFLock)
+            {
+                Thread thread = new Thread(() => ProcessRequest(Request));
+                thread.Start();
+            }
+            
         }
 
     }
 
-    void ProcessRequest( FindPathRequest Request )
+    void ProcessRequest(FindPathRequest Request)
     {
-        lock (PFLock)
-        {
-            Request.Callback(PF.FindPath(Request.Start, Request.Target));
-        }
+        Request.Callback(PF.FindPath(Request.Start, Request.Target));
     }
 
     public void RegiesterPathRequest(FindPathRequest Request)
     {
-        RequestQueue.Enqueue(Request);
+        lock (PFLock)
+        {
+            RequestQueue.Enqueue(Request);
+        }
     }
 }
 
 
 
-    public struct FindPathRequest
+public struct FindPathRequest
 {
     public Vector3 Start { get; set; }
     public Vector3 Target { get; set; }

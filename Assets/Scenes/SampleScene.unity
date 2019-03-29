@@ -880,14 +880,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PF: {fileID: 1873609681}
   GridDimensions: {x: 10, y: 15}
-  NodeRadius: 0.25
+  NodeRadius: 0.1
   ObstaclesMask:
     serializedVersion: 2
     m_Bits: 512
   TypesOfGround: []
   isDynamic: 0
-  GridX: 0
-  GridY: 0
+  GridX: 50
+  GridY: 50
 --- !u!4 &1873609680
 Transform:
   m_ObjectHideFlags: 0

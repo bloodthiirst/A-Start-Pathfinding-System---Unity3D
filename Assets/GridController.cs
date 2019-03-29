@@ -37,9 +37,19 @@ public class GridController : MonoBehaviour
         GridY = Mathf.RoundToInt(GridDimensions.y / NodeDiameter);
 
         CreateGrid();
-        BlurGrid();
+        GenerateNeighbors();
     }
 
+    private void GenerateNeighbors()
+    {
+        for(int x = 0; x < GridX; x++)
+        {
+            for (int y = 0;  y < GridY; y++)
+            {
+                Nodes[x, y].Neighbors = Nodes[x, y].NeighborsList();
+            }
+        }
+    }
 
     void CreateGrid()
     {

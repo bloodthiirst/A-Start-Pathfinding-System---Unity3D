@@ -16,15 +16,19 @@ public class PathFinder : MonoBehaviour
         Node StartNode = Grid.NodeFromWorldPoint(Start);
         Node EndNode = Grid.NodeFromWorldPoint(Target);
 
-        List<Node> OpenSet = new List<Node>();
+        if (!EndNode.Walkable)
+            return new Node[0];
+
+        MinHeap<Node> OpenSet = new MinHeap<Node>();
         List<Node> ClosedSet = new List<Node>();
 
-        OpenSet.Add(StartNode);
+        OpenSet.Insert(StartNode);
 
         while (OpenSet.Count > 0)
         {
-            Node CurrentNode = OpenSet[0];
+            Node CurrentNode = OpenSet.ExtractMin();
 
+            /*
             for (int i = 1; i < OpenSet.Count; i++)
             {
                 if (OpenSet[i].fCost < CurrentNode.fCost || OpenSet[i].fCost == CurrentNode.fCost && OpenSet[i].hCost < CurrentNode.hCost)
@@ -32,8 +36,7 @@ public class PathFinder : MonoBehaviour
                     CurrentNode = OpenSet[i];
                 }
             }
-
-            OpenSet.Remove(CurrentNode);
+            */
             ClosedSet.Add(CurrentNode);
 
             if (CurrentNode == EndNode)
@@ -41,8 +44,11 @@ public class PathFinder : MonoBehaviour
                 return RetracePath(StartNode, EndNode);              
             }
 
-            foreach (Node neighbor in CurrentNode.NeighborsList())
+            foreach (Node neighbor in CurrentNode.Neighbors)
             {
+                if (neighbor == null)
+                    continue;
+
                 if (!neighbor.Walkable || ClosedSet.Contains(neighbor))
                     continue;
 
@@ -56,7 +62,7 @@ public class PathFinder : MonoBehaviour
 
                     if (!OpenSet.Contains(neighbor))
                     {
-                        OpenSet.Add(neighbor);
+                        OpenSet.Insert(neighbor);
                     }
                 }
             }
@@ -65,6 +71,17 @@ public class PathFinder : MonoBehaviour
         }
 
         return new Node[0];
+    }
+
+    private bool ContainsNode(IList<Node> list, Node node)
+    {
+        for(int i = 0; i < list.Count; i++)
+        {
+            if (list[i] == node)
+                return true;
+        }
+
+        return false;
     }
 
     Node[] RetracePath(Node Start, Node Target)
