@@ -132,9 +132,6 @@ public class GridController2D : MonoBehaviour
         if (Nodes == null)
             return;
 
-
-        Debug.Log(Nodes.Length);
-
         foreach(var node in Nodes)
         {
             Gizmos.color = Color.yellow;
