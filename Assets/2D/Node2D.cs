@@ -5,21 +5,23 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class Node : IComparable
+public class Node2D : IComparable
 {
-    public GridController Grid;
+    public GridController2D Grid;
 
-    public Node Parent { get; set; }
+    public Node2D Parent { get; set; }
 
     public bool Walkable { get; set; }
 
     public float WorldOffsetX { get; set; }
     public float WorldOffsetZ { get; set; }
-    public Vector3 WorldPosition
+    public Vector2 WorldPosition
     {
         get
         {
-            return Grid.BottomLeftCornerWorldSpace() + Grid.transform.right * ((x * Grid.NodeDiameter) + Grid.NodeRadius) + Grid.transform.forward * ((y * Grid.NodeDiameter) + Grid.NodeRadius);
+            return Grid.BottomLeftCornerWorldSpace() 
+                + (Grid.transform.right.Vector3To2() * ((x * Grid.NodeDiameter) + Grid.NodeRadius)) 
+                + (Grid.transform.up.Vector3To2() * ((y * Grid.NodeDiameter) + Grid.NodeRadius));
 
         }
     }
@@ -30,11 +32,11 @@ public class Node : IComparable
 
     public int x { get; set; }
     public int y { get; set; }
-    public List<Node> Neighbors = new List<Node>();
+    public List<Node2D> Neighbors = new List<Node2D>();
 
-    public List<Node> BlurKernelList()
+    public List<Node2D> BlurKernelList()
     {
-        List<Node> Neighbors = new List<Node>();
+        List<Node2D> Neighbors = new List<Node2D>();
 
         for (int i = -1; i <= 1; i++)
         {
@@ -60,7 +62,7 @@ public class Node : IComparable
 
     }
 
-    public List<Node> NeighborsList()
+    public List<Node2D> NeighborsList()
     {
         Neighbors.Clear();
 
@@ -97,7 +99,7 @@ public class Node : IComparable
         return (value >= min && value <= max);
     }
 
-    public static float GetDistance( Node A , Node B)
+    public static float GetDistance(Node2D A , Node2D B)
     {
         int distX = Mathf.Abs(A.x - B.x);
         int distY = Mathf.Abs(A.y - B.y);
@@ -113,7 +115,7 @@ public class Node : IComparable
 
     public int CompareTo(object obj)
     {
-        var tmp = obj as Node;
+        var tmp = obj as Node2D;
         if (tmp == null)
             return 0;
         if (this.fCost < tmp.fCost || this.fCost == tmp.fCost && this.hCost < tmp.hCost)

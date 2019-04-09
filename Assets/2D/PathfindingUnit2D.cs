@@ -3,18 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PathfindingUnit : MonoBehaviour
+public class PathfindingUnit2D : MonoBehaviour
 {
     public Transform Target;
-    List<Node> CurrentPath;
+    List<Node2D> CurrentPath;
+
+    float PathTimer = 0f;
 
     // Update is called once per frame
     void Update()
     {
-        PathFinderManager.GetInstance().RegiesterPathRequest(new FindPathRequest() { Start = transform.position, Target = Target.position, Callback = OnPathfound });
+        PathTimer += Time.deltaTime;
+
+        if (PathTimer > 1.5f)
+        {
+            PathTimer = 0;
+                PathFinderManager2D.GetInstance().RegiesterPathRequest(new FindPathRequest2D() { Start = transform.position, Target = Target.position, Callback = OnPathfound });
+        }
     }
 
-    void OnPathfound(Node[] Path)
+    void OnPathfound(Node2D[] Path)
     {
         CurrentPath = Path.ToList();
     }
@@ -24,7 +32,7 @@ public class PathfindingUnit : MonoBehaviour
         if (CurrentPath == null)
             return;
 
-        for(int i = 1; i < CurrentPath.Count;i++)
+        for (int i = 1; i < CurrentPath.Count; i++)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawLine(CurrentPath[i - 1].WorldPosition, CurrentPath[i].WorldPosition);

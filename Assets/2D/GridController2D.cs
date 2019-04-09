@@ -6,17 +6,17 @@ using UnityEngine;
 
 
 
-public class GridController : MonoBehaviour
+public class GridController2D : MonoBehaviour
 {
-    public PathFinder PF;
+    public PathFinder2D PF;
 
 
-    public Node[,] Nodes { get; set; }
+    public Node2D[,] Nodes { get; set; }
     public Vector2 GridDimensions;
     public float NodeRadius;
     public LayerMask ObstaclesMask;
 
-
+    public Vector2 GridAnchor;
 
 
     [Header("Grounds Types")]
@@ -33,6 +33,7 @@ public class GridController : MonoBehaviour
 
     private void Awake()
     {
+       
         GridX = Mathf.RoundToInt(GridDimensions.x / NodeDiameter);
         GridY = Mathf.RoundToInt(GridDimensions.y / NodeDiameter);
 
@@ -53,7 +54,9 @@ public class GridController : MonoBehaviour
 
     void CreateGrid()
     {
-        Nodes = new Node[GridX, GridY];
+        GridAnchor = transform.position;
+
+        Nodes = new Node2D[GridX, GridY];
 
         for(int x = 0; x < GridX; x++)
         {
@@ -61,8 +64,8 @@ public class GridController : MonoBehaviour
             {
                 //Vector3 NodeWorldPos = BottomLeftCornerWorldSpace() + transform.right * ( (x * NodeDiameter) + NodeRadius) + transform.forward * ((y * NodeDiameter) + NodeRadius);
 
-                Node node = new Node() { x = x, y = y, Grid = this };
-                node.Walkable = !(Physics.CheckSphere(node.WorldPosition, NodeRadius, ObstaclesMask));
+                Node2D node = new Node2D() { x = x, y = y, Grid = this };
+                node.Walkable = Physics2D.OverlapCircle(node.WorldPosition, NodeRadius, ObstaclesMask.value) == null;
                 Nodes[x, y] = node;
             }
         }
@@ -70,7 +73,7 @@ public class GridController : MonoBehaviour
 
     void BlurGrid()
     {
-        var BlurredGrid = new Node[GridX, GridY];
+        var BlurredGrid = new Node2D[GridX, GridY];
 
         for (int x = 0; x < GridX; x++)
         {
@@ -78,7 +81,7 @@ public class GridController : MonoBehaviour
             {
                 //Vector3 NodeWorldPos = BottomLeftCornerWorldSpace() + transform.right * ( (x * NodeDiameter) + NodeRadius) + transform.forward * ((y * NodeDiameter) + NodeRadius);
 
-                Node node = Nodes[x, y];
+                Node2D node = Nodes[x, y];
 
                 var Kernel = node.BlurKernelList();
                 node.hCost = Kernel.Select(n => n.hCost).Average();
@@ -91,15 +94,17 @@ public class GridController : MonoBehaviour
         Nodes = BlurredGrid;
     }
 
-    public Vector3 BottomLeftCornerWorldSpace()
+    public Vector2 BottomLeftCornerWorldSpace()
     {
-        return transform.position - (transform.right * (GridDimensions.x / 2)) - (transform.forward * (GridDimensions.y / 2));
+        return GridAnchor 
+            - (transform.right.Vector3To2() * (GridDimensions.x / 2)) 
+            - (transform.up.Vector3To2() * (GridDimensions.y / 2));
     }
 
-    public Node NodeFromWorldPoint(Vector3 WordPos)
+    public Node2D NodeFromWorldPoint(Vector2 WordPos)
     {
-        float PercentX = (WordPos.x + GridDimensions.x / 2) / GridDimensions.x;
-        float PercentY = (WordPos.z + GridDimensions.y / 2) / GridDimensions.y;
+        float PercentX = ((WordPos.x - GridAnchor.x) + GridDimensions.x / 2) / GridDimensions.x;
+        float PercentY = ((WordPos.y - GridAnchor.y) + GridDimensions.y / 2) / GridDimensions.y;
 
         PercentX = Mathf.Clamp01(PercentX);
         PercentY = Mathf.Clamp01(PercentY);
@@ -118,8 +123,8 @@ public class GridController : MonoBehaviour
 
     void DrawGridShape()
     {
-        Gizmos.color = Color.white;
-        Gizmos.DrawCube(transform.position, new Vector3(GridDimensions.x, 0.1f, GridDimensions.y));
+        Gizmos.color = new Color(1, 1, 1 , 0.4f);
+        Gizmos.DrawCube(transform.position, new Vector3(GridDimensions.x, GridDimensions.y , 0.1f));
     }
 
     void DrawNodes()
@@ -127,14 +132,20 @@ public class GridController : MonoBehaviour
         if (Nodes == null)
             return;
 
+
+        Debug.Log(Nodes.Length);
+
         foreach(var node in Nodes)
         {
             Gizmos.color = Color.yellow;
 
             if ( !node.Walkable )
+            {
                 Gizmos.color = Color.red;
+            }
+                
 
-            Gizmos.DrawWireCube(node.WorldPosition, new Vector3(NodeDiameter, 0.1f, NodeDiameter ));
+            Gizmos.DrawWireCube(node.WorldPosition, new Vector3(NodeDiameter, NodeDiameter , 0.1f ));
         }
     }
     

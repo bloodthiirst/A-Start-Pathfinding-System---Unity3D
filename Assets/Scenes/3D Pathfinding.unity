@@ -804,7 +804,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1450830374}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.01, y: 0.84575653, z: -6.33}
+  m_LocalPosition: {x: -1.1100007, y: -0.6, z: -4.55}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -834,7 +834,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1577287821}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5492243, y: 2, z: 0.34445733}
+  m_LocalPosition: {x: -1.55, y: 0.6624166, z: -3.1587505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2118316601}
@@ -879,13 +879,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PF: {fileID: 1873609681}
-  GridDimensions: {x: 10, y: 15}
+  GridDimensions: {x: 15, y: 15}
   NodeRadius: 0.1
   ObstaclesMask:
     serializedVersion: 2
     m_Bits: 512
   TypesOfGround: []
-  isDynamic: 0
+  isDynamic: 1
   GridX: 50
   GridY: 50
 --- !u!4 &1873609680
@@ -896,7 +896,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1873609678}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.0000012591481, y: -0.6, z: -3.9819832}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1106,7 +1106,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2093296416}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.41, y: 0.5332031, z: 6.48}
+  m_LocalPosition: {x: 1.5200027, y: -0.6, z: -4.3369246}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1125,6 +1125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 1450830379}
+  Mode2d: 0
 --- !u!1 &2118316597
 GameObject:
   m_ObjectHideFlags: 0
