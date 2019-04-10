@@ -50,6 +50,11 @@ public static class Utils
         return new Vector3(vec.x, vec.z, vec.y);
     }
 
+    public static Vector3 Vector2To3(this Vector2 vec)
+    {
+        return new Vector3(vec.x, vec.y , 0 );
+    }
+
     public static Vector2 Vector3To2(this Vector3 vec)
     {
         return new Vector2(vec.x, vec.y);
